@@ -1,0 +1,22 @@
+Ant this ant simulations;
+
+This is an ant simulation which has multiple ants as agents, 
+The ants navigate using pheromones which are applied in a slime mould way.
+
+
+
+Bugs:
+the has food bug :
+  FOOD Randomly dispears while the ant is carring it ,
+
+Glicth of the ants in an obstacle:
+
+
+
+Main objectives 
+
+
+Optimise the slime mould hive map
+Maybe use the A* algorithm.
+path finding SMA(slime mould algorithm)
+

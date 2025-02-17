@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+
+    <title>Ant Simualtion</title>
+</head>
+<body>
+     <div id="ControlsTab">
+        <button class='btn' id="Btn-Reset">Reset</button>
+        <input type="text" id="NumAnts" placeholder="Number of Ants "/>
+        <label class="class-Label"> Add obstacles :
+            <input type="radio" id="AddObstacles" class="Btn-Radio"/>
+        </label>
+        <label class="class-Label"> Add Food : 
+            <input type="radio" id="AddFood" class="Btn-Radio"/>
+        </label>
+        <label class="class-Label"> Debug Mode :
+            <input type="radio" id="DebugMode" class="Btn-Radio"/>
+        </label>
+
+     </div>
+     <canvas id="canvas"></canvas>
+</body>
+
+    <script src="controls.js"></script>
+    <script src="food.js"></script>
+    <script src="pheromone.js"></script>
+    <script src="sensor.js"></script>
+    <script src="ant.js"></script>
+    <script src ='colony.js'></script>
+    <script src ='obstacles.js'></script>
+    <script src ='main.js'></script>
+</html>
