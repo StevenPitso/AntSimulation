@@ -24,7 +24,7 @@ class Ant{
         this.ClosestPheromones = [];
         this.debugMod = debugMode;
         this.senseRange = 40;
-
+        this.collision = false;
         this.sensors = [
             new Sensor(this.x, this.y, Math.PI*0, this.senseRange + 8, ' F', 5),  // 0
             new Sensor(this.x, this.y, -Math.PI/9, this.senseRange,' L', 5),  // 1
@@ -64,19 +64,24 @@ class Ant{
         this.sensors[3].update(this.x, this.y, this.direction, MAP);
         this.sensors[4].update(this.x, this.y, this.direction, MAP);
         this.sensors[5].update(this.x, this.y, this.direction, MAP);
-           
+        ///console.log(this.x)
+
+
+
+       // this.direction = this.detectObstacles(MAP);
 
         if(!(this.sensors[0].collision) && !(this.sensors[1].collision) && !(this.sensors[2].collision)  && !(this.sensors[3].collision) ){
-            this.direction = this.wander(phero, MAP)
+            this.direction = this.detectObstacles(MAP);
         }else if(!(this.sensors[3].collision)){
             this.direction = this.navigateUsingPheromones(phero);
         }else if(this.sensors[3].collision){
+            //console.log('ww')
             this.direction = this.detectObstacles(MAP);
         }
 
         const distanceToNest = Math.sqrt((this.x - this.nestNode.x)**2 + (this.y - this.nestNode.y)**2)
 
-        if(distanceToNest < 200 && this.hasFood){
+        if(distanceToNest < 180 && this.hasFood){
             this.direction = Math.atan2(this.nestNode.y - this.y , this.nestNode.x - this.x);
             if(distanceToNest < 20){
                 this.hasFood = false
@@ -90,7 +95,7 @@ class Ant{
 
         for(let i = 0; i < this.foodMap.length; i++){
              const distanceToFood = Math.sqrt((this.x - this.foodMap[i].x)**2 + (this.y - this.foodMap[i].y)**2)
-             if(distanceToFood  < 100 && !this.hasFood  && !this.foodMap[i].carried){
+             if(distanceToFood  < 80 && !this.hasFood  && !this.foodMap[i].carried){
                this.direction = Math.atan2(this.foodMap[i].y - this.y, this.foodMap[i].x - this.x)
                 if(distanceToFood < 5){
                     this.direction += Math.PI
@@ -105,108 +110,73 @@ class Ant{
            
         }
 
-        this.x += Math.cos(this.direction)  * (this.speed);
-        this.y += Math.sin(this.direction)  * (this.speed );
+        this.x += Math.cos(this.direction)  * this.speed;
+        this.y += Math.sin(this.direction)  * this.speed;
 
     }
-    navigateUsingPheromones(phero){
-        let pheromones = phero;
-        let turnRate = .3
-        let ClosestPheromones = this.#findClosestNeighbours(pheromones, 50);
-        if(this.hasFood){
-            pheromones = pheromones.filter(p => (p.type == 'Home'))
-            //console.log(pheromones)
-            if(this.sensors[1].detectCollision(ClosestPheromones)){
-                this.direction -= turnRate ;
-               // console.log(this.sensors[1].detectCollision(pheromones))
-            }
-            if(this.sensors[2].detectCollision(ClosestPheromones)){
-                this.direction += turnRate ;
-            }
-            if(this.sensors[0].detectCollision(ClosestPheromones)){
-                this.direction = this.direction ;
-            }
-
-        }else if(this.hasFood && ClosestPheromones.length > 30){ //30
-            pheromones = pheromones.filter(p =>  (p.type == 'Home'))
-            //console.log('Hit')
-            if(this.sensors[1].detectCollision(ClosestPheromones)){
-                this.direction -= turnRate ;
-            }
-            if(this.sensors[2].detectCollision(ClosestPheromones)){
-                this.direction += turnRate ;
-            }
-            if(this.sensors[0].detectCollision(ClosestPheromones)){
-                this.direction = this.direction;
-            }
-
-        }else if(!this.hasFood && ClosestPheromones.length > 20){ // 20
-
-            pheromones = pheromones.filter(p =>  (p.type == 'Home'))
-            //console.log(pheromones)
-            if(this.sensors[1].detectCollision(ClosestPheromones)){
-                this.direction -= turnRate;
-            }
-            if(this.sensors[2].detectCollision(ClosestPheromones)){
-                this.direction += turnRate;
-            }
-            if(this.sensors[0].detectCollision(ClosestPheromones)){
-                this.direction = this.direction;
-            }
-            //console.log('No food')
-
-        }else{
-            pheromones = pheromones.filter(p => (p.type == 'Food'))
-            //console.log(pheromones)
-            if(this.sensors[1].detectCollision(ClosestPheromones)){
-                this.direction -= turnRate  + .5;
-               // console.log(this.sensors[1].detectCollision(pheromones))
-            }
-            if(this.sensors[2].detectCollision(ClosestPheromones)){
-                this.direction += turnRate + .5;
-            }
-            if(this.sensors[0].detectCollision(ClosestPheromones)){
-                this.direction = this.direction;
-            }
-           // console.log('hit')
-        }
-
+    navigateUsingPheromones(phero) {
+        const turnRate = 0.34;
+        const closeRange = 50;
+        const closest = this.#findClosestNeighbours(phero, closeRange);
         
-        //
-        //console.log(pheromones)
-       // console.log(this.sensors[1].detectCollisiontype(phero, 'FOOD'))
-
-
+        if (closest.length === 0) return this.direction; // No pheromones detected
+    
+        // Filter by state
+        const type = this.hasFood ? 'Home' : 'Food';
+        const filtered = closest.filter(p => p.type === type);
+    
+        if (filtered.length === 0) return this.direction; // No relevant pheromones
+    
+        // Sensor detection scores (weighted by concentration)
+        const scores = [
+            this.sensors[0].detectCollisionStrength(filtered), // Front
+            this.sensors[1].detectCollisionStrength(filtered), // Left
+            this.sensors[2].detectCollisionStrength(filtered)  // Right
+        ];
+    
+        // Choose direction based on strongest signal
+        if (scores[1] > scores[2] && scores[1] > scores[0]) {
+            this.direction -= turnRate;
+        } else if (scores[2] > scores[1] && scores[2] > scores[0]) {
+            this.direction += turnRate;
+        } else if (scores[0] > 0) {
+            // Keep going straight if strongest is ahead
+            // Optional: add a slight reinforcement
+            this.direction += 0;
+        } else {
+            // Slightly randomize if no signal is strong
+            this.direction += Math.random() * turnRate - turnRate / 2;
+        }
+        
         return this.direction;
     }
+
+    
     detectObstacles(Obstacles){
 
-        //this.sensors[3].update(this.x, this.y, this.direction, Obstacles);
-        this.sensors[4].update(this.x, this.y, this.direction, Obstacles);
-        this.sensors[5].update(this.x, this.y, this.direction, Obstacles);
-       // console.log(this.sensors[3].detectCollisiontype(Obstacles, 500))
+      
+        for(let i = 1; i < Obstacles.length; i++){
 
-        if(this.sensors[3].detectCollisiontype(Obstacles, 500)){
-          // this.direction = -this.direction + Math.random() * 4  - 1 *  Math.PI/4;
-         //   console.log('ant: '+ this.direction + '  sensors: '+ this.sensors[3].outputAngle)
-            //this.direction = -this.sensors[3].outputAngle;
-        }
-        if(this.sensors[4].detectCollisiontype(Obstacles, 500)){
-            // this.direction = -this.direction + Math.random() * 4  - 1 *  Math.PI/4;
-            //console.log(this.sensors[4].detectCollisiontype(Obstacles, 500) + ' '+ 'L')
-              this.direction += 20*Math.PI/2;
-        }
-        if(this.sensors[5].detectCollisiontype(Obstacles, 500)){
-            // this.direction = -this.direction + Math.random() * 4  - 1 *  Math.PI/4;
-             //console.log(this.sensors[5].detectCollisiontype(Obstacles, 500) + ' '+ 'R')
-              this.direction -= Math.PI/2;
-        }
+           
+           const obx = Obstacles[i].x * 25; // 
+           const oby = Obstacles[i].y * 25;
+           
+           if(        
+            
+            this.x < obx + Obstacles[i].width &&
+            this.x + this.width > obx &&
+            this.y < oby + Obstacles[i].height &&
+            this.y + this.height > oby){
 
+               this.collision = true;
+               this.direction += Math.PI + (Math.PI - 0.50)
+           };
+
+        }
         
         return this.direction;
-        
     }
-
+    
     detectFood(listFoodItems){
         if(this.sensors[6].update(listFoodItems)){
             this.direction -= Math.PI * 0.45;
@@ -218,6 +188,7 @@ class Ant{
 
             
             if(this.x <= 50 || this.x >= this.canvas.width -50){
+                
                 this.direction =  Math.PI - this.direction;
             }
             if(this.y <= 50 ||  this.y >=  this.canvas.height - 50){
@@ -278,23 +249,34 @@ class Ant{
         ctx.save();
         ctx.translate( this.x, this.y)
         ctx.rotate(this.direction);
+        ctx.rotate(8);
 
         if(this.debugMod){
 
             ctx.save()
             ctx.beginPath()
-            ctx.rotate(8)
+            
             ctx.moveTo(-this.width/10, -this.height/2)
             ctx.lineTo(-this.width /4 , -this.height * 5)
             ctx.stroke()
             ctx.restore()
        
             ctx.beginPath();
-            ctx.rect(-this.width/2 , -this.height/2 , this.width, this.height)
+            if(this.collision){
+             ctx.strokeStyle = 'red';
+             ctx.lineWidth = 10;
+             this.collision = false;
+            }else{
+                ctx.strokeStyle = 'blue'
+            }
+          
+            let  rad = 10
+            ctx.rect(-(this.width +2*rad)/2, -(this.height+2*rad)/2, this.width+rad, this.height -60)
             ctx.stroke()
-        }
+  
 
-        ctx.rotate(8);
+        }
+        let  rad = 10
         ctx.drawImage(this.image, -this.width/2, -this.height/2, this.width, this.height);
         ctx.restore();
 
@@ -302,10 +284,10 @@ class Ant{
             this.sensors[0].draw(ctx)
             this.sensors[1].draw(ctx)
             this.sensors[2].draw(ctx)
-            this.sensors[3].draw(ctx)
-            this.sensors[4].draw(ctx)
+            //this.sensors[3].draw(ctx)
+             this.sensors[4].draw(ctx)
             this.sensors[5].draw(ctx)
-            this.sensors[6].draw(ctx)
+            //this.sensors[6].draw(ctx)
         }
 
  

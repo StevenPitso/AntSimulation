@@ -6,23 +6,26 @@ class Pheromounes{
         this.y = y;
         this.radius = radius;
         this.type = type;
-        this.concentration = 1;
+        this.concentration = 0.01;
         this.avgConcentration = null;
         this.highestInMyRegion = false;
         this.Ants = [];
         this.strenght = 1;
         this.age = 0; 
-        this.lifespan = Math.random() * 0.52 +  Math.random() * 2.98;
+
+        
+        this.lifespan = Math.random() * 0.52 +  Math.random() * 3.98;
 
     }
     update(){
        this.age++;
        ///this.strenght *= .011;
        if(this.type == 'Food'){
-        this.strenght = 1 
+        this.concentration += 0.02
+    
        }
        if(this.type == 'Home'){
-        this.strenght = 1;
+        
        }
     }
     pathOptimiser(){
@@ -49,12 +52,12 @@ class Pheromounes{
     }
 
     evaporate(){
-        const decayRate = (this.type == 'Food') ? 1.2 : .6; 
+        const decayRate = (this.type == 'Food') ? 1.2 : .9; 
         return this.age > 60 * this.lifespan * decayRate;
     }
     draw(ctx){
         ctx.beginPath();
-        ctx.fillStyle = (this.type == 'Home') ? 'Blue' : 'Red';
+        ctx.fillStyle = (this.type == 'Home') ? 'black' : 'green';
         ctx.arc(this.x , this.y, this.radius, 0, Math.PI * 2)
         ctx.fill();
     }

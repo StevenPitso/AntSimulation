@@ -1,6 +1,3 @@
-// Main.js file
-
-
 /* 
   this a Ant simulations which uses slime moulds for pheromone navigation 
   and PATH making  this is my first attempt at making a simulation
@@ -9,8 +6,9 @@
   project
   - concentrations pheremone navigations
   - maybe apply a pathfinding algorithm e.g A*
-  - make a better collision detections system;
+  - make a better collision detections system;2
   - fix bugs ( hasFood no food Bug , leaving bounds)
+  - Apply design patterns
 */
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
@@ -18,71 +16,55 @@ const ctx = canvas.getContext('2d');
 canvas.height =  window.innerHeight;
 canvas.width =  window.innerWidth;
 
-let myColony = new Colony(canvas ,ctx ,100,canvas.width * .5 ,canvas.height * .5);
+let labelDebugMode = document.getElementById('labelDebugMode');
+let labelWallMode = document.getElementById('labelWallMode');
+let labelEditMap =document.getElementById('labelEditMap');
+const state = InputsAndOutputs();
+
+let myCave = new Cave(canvas);
+myCave.terraform(9); // Terraform FIRST!
 
 
-function DrawMap(){
-    let MAP = []
-    let draw = false;
-    let pheromones = false;
-    let DebugMode = false;
+let colonyCoords = myCave.SpawnColony();
+let myColony = new Colony(canvas ,ctx ,100,colonyCoords.x , colonyCoords.y);
 
-     document.addEventListener('mousemove', (e) =>{
-      document.onkeydown = (event)=> {
-       //console.log(event.key)
-        if(event.key == 'e'){
-          draw = !draw;
-          a
-        }
-        if(event.key == 'p'){
-          pheromones = !pheromones;
-        }
-        if(event.key == 'd'){
-          DebugMode = !DebugMode;
-          myColony._DEBUG_ =! myColony._DEBUG_
-        }
-        if(event.key == 's'){
+let foodSpawer = new FoodSpawer();
+foodSpawer.initMap(myCave.Map, myCave.MapConfig);
+foodSpawer.spawer(10);
+myCave.SpawnFood(6);
 
-        }
-      }
 
-        if(draw){
-          MAP.push(new Obstacle(e.x *0.9999, e.y *0.9999,50))
-        }
 
-     });
+function spwanFood(Tn = 3){
+  let Foodlist = myCave.SpawnFoodRegions;
+  let listFood = [];
+  
+  for(let i = 0; i <  myCave.SpawnFoodRegions.length; i++){
+       for(let n = 0; n <= Tn; n++){
 
-   return MAP;
+        listFood.push(new Food(Foodlist[i].x + Math.random() * 50, Foodlist[i].y+ Math.random() * 50))
+       } 
+  }
+
+  return listFood;
 }
 
-let MaP =  DrawMap()
-
-function spwanFood(n, Tn = 3){
-
-  let Foodlist = []
-  for(let c = 0 ; c < Tn ; c++){
-    let Node = {x: Math.random() * canvas.width, y: Math.random() * canvas.height }
-    for(let i = 3; i <= n +3 ; i++){
-      Foodlist.push(new Food(Node.x + i + Math.random() * 30 + i* Math.random() * -2+1, Node.y + i  + Math.random() * 30 + i * Math.random() * -2+1))
-    }
-  } 
-
-  return Foodlist;
-}
-let FFood = spwanFood(-3)
+let FFood = spwanFood(80)
 myColony.listFood = FFood;
+
 
 function animate(){
     canvas.width  =  window.innerWidth
     canvas.height =  window.innerHeight;
 
-    myColony.MAP = MaP;
+    myCave.update(state.editMode,state.debugMode);
     
-    for(let m of MaP){
-      m.draw(ctx)
-    }
 
+    myCave.draw(ctx);
 
+    myColony.MAP = myCave.getEdgeWalls();
+    myCave.drawEdges(ctx);
+    foodSpawer.draw(ctx)
 
     for(let i = 0; i < myColony.listPheromones.length; i++){
       myColony.listPheromones[i].draw(ctx)
@@ -92,12 +74,11 @@ function animate(){
       f.draw(ctx) 
      }
 
+
+  
     myColony.draw(ctx);
-    myColony.update();
-
-
-
-
+    myColony.update(state.debugMode);
+    
     for(let i = 0; i < myColony.listPheromones.length; i++){
        myColony.listPheromones[i].update();
        if(myColony.listPheromones[i].evaporate()){
@@ -110,13 +91,57 @@ function animate(){
       myColony.listFood[i].update(myColony.Ants);
       if(myColony.listFood[i].disposeFood()){
         myColony.listFood.splice(i,1);
+        myColony.foodCollected ++;
         i--;
       }
     }
 
 
-
+ 
     requestAnimationFrame(animate);
 }
  
 animate()
+
+
+
+function InputsAndOutputs() {
+  const state = {
+    debugMode: false,
+    editMode: false,
+    removeWall: true,
+    addWall: false,
+  };
+
+  document.addEventListener('keydown', (e) => {
+    const key = e.key.toLowerCase(); // in case caps lock is on
+
+    if (key === 'd') {
+      document.getElementById("labelDebugMode").textContent = (state.debugMode) ?  'Debug Mode : OFF' : 'Debug Mode : ON';
+      state.debugMode = !state.debugMode;
+      
+    } else if (key === 'e') {
+      state.editMode = !state.editMode;
+      document.getElementById("labelEditMap").textContent = (state.editMode) ?  'EDIT Mode  : ON' : 'EDIT Mode  : OFF';
+    } else if (key === 'r') {
+      state.removeWall = !state.removeWall;
+    } else if (key === 'a') {
+      state.addWall = !state.addWall;
+    }
+    
+    if(state.editMode){
+      if(key == 'r'){
+        toolFlag = 'Tool : Removing Wall'
+      }else if(key === 'a'){
+        toolFlag ='Tool : Adding wall'
+      }
+      document.getElementById("labelWallMode").textContent = toolFlag
+    }
+
+
+
+     console.log("Updated state:", state);
+  });
+
+  return state; // the object reference stays the same, so you can track updates
+}

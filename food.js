@@ -6,7 +6,7 @@ class Food{
         this.collisions = false;
         this.carried = false;
         this.isInNest = false;
-        this.radius = 7;
+        this.radius = 5;
         this.carrierAnt = 0;
 
 
@@ -69,5 +69,93 @@ class Food{
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
         ctx.fill();
 
+    }
+}
+
+
+class FoodSpawer {
+
+    constructor() {
+
+        this.unitsize = 25;
+        this.Map = [];
+        this.listFoods = [];
+        this.MapConfig = {
+            unitSize: 25,
+            width: 20,
+            height: 20,
+        };
+    }
+
+    initMap(Map, MapConfig) {
+        // Initialize the 2D grid map
+    
+       this.MapConfig = MapConfig
+       this.Map = Map
+       
+      
+
+    }
+
+    update() {
+        // You could regenerate food or check state changes here
+    }
+
+    #isClear3by3(x, y) {
+
+        if(  x <= 0 || y <= 0 ||
+             x >= this.MapConfig.width - 1 ||
+             y >= this.MapConfig.height -1
+        ){return false} ;
+
+
+        for(let  dx = -1; dx <=  1; dx++){
+
+            for(let dy = -1; dy <= 1; dy++){
+
+                let nx = x + dx;
+                let ny = y + dy;
+
+                if(this.Map[nx][ny] === 1 || this.Map[nx][ny] === 2 ){
+                    //console.log(this.Map[nx][ny])
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    spawer() {
+
+        for(let x = 1; x < this.MapConfig.width -1 ; x++){
+
+            for(let y = 1; y < this.MapConfig.height- 1; y++){
+                
+                
+                if(this.Map[x][y] === 2){
+                   // this.listFoods.push(new Food(x * this.MapConfig.width, y * this.MapConfig.height));
+                  console.log(s)
+                }
+            }
+        }
+
+    }
+
+    draw(ctx) {
+
+       
+        for(let x = 1; x < this.MapConfig.width; x++){
+
+            for(let y = 1; y < this.MapConfig.height; y++){
+                
+                if(this.Map[x][y] === 2){
+                    ctx.beginPath()
+                    ctx.fillStyle = '#ff43a4'
+                    ctx.rect(x * this.MapConfig.unitSize, y * this.MapConfig.unitSize, this.MapConfig.unitSize, this.MapConfig.unitSize)
+                    ctx.fill()
+                }
+            }
+        }
     }
 }

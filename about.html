@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>About - Ant Simulation</title>
+  <style>
+    body {
+      background-color: #9a7403;
+      font-family: monospace;
+      font-size: 24px;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #fff;
+      margin-bottom: 30px;
+      border-bottom: 2px solid #fff;
+      padding-bottom: 10px;
+    }
+
+    .section {
+      max-width: 800px;
+      margin-bottom: 25px;
+    }
+
+    b {
+      color: #ffeb3b;
+    }
+
+    a {
+      color: #ffffff;
+      text-decoration: underline;
+    }
+
+    a:hover {
+      color: #ffcc00;
+    }
+
+    ul {
+      margin-top: 10px;
+      padding-left: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>About This Simulation</h1>
+
+  <div class="section">
+    <p><b>1) Debug Mode</b> enables visibility of sensors and hitboxes.</p>
+    <p>
+      &nbsp;&nbsp;&nbsp;— <b>ON:</b> Sensors and hitboxes are <u>visible</u><br>
+      &nbsp;&nbsp;&nbsp;— <b>OFF:</b> Sensors and hitboxes are <u>invisible</u>
+    </p>
+  </div>
+
+  <div class="section">
+    <p><b>2) Wall Tools</b> allow you to <b>ADD</b> or <b>REMOVE</b> obstacles on the map.</p>
+    <p>Press <b>E</b> to toggle edit mode.<br>
+       Press <b>A</b> to add a wall.<br>
+       Press <b>R</b> to remove a wall.<br>
+       Press <b>D</b> to toggle debug mode.</p>
+  </div>
+
+  <div class="section">
+    <p><b>3) Bugs to Look Out For:</b></p>
+    <ul>
+      <li>Ants will keep moving over a newly placed wall until pheromones in that area evaporate fully.</li>
+      <li>A high concentration of food pheromone (green) might cause the simualtion to be messy</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <p><b>Thanks for checking out my project!</b></p>
+    <p>Click <a href="../index.html">here to go back</a>.</p>
+  </div>
+
+</body>
+</html>

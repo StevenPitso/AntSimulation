@@ -66,7 +66,44 @@ class Sensor{
       }
       return false;
     }
-    
+
+  
+
+  getCirclePoints(centerX, centerY, radius, numPoints) {
+    const points = [];
+
+    for (let i = 0; i < numPoints; i++) {
+        const angle = (2 * Math.PI * i) / numPoints;
+        const x = centerX + radius * Math.cos(angle);
+        const y = centerY + radius * Math.sin(angle);
+        points.push({ x, y });
+    }
+
+    return points;
+ }
+
+    detectCollisiontype(obstacles) {
+
+      return false;
+  }
+  
+
+
+  
+    detectCollisionStrength(pheromones) {
+      let totalStrength = 0;
+  
+      for (let p of pheromones) {
+          const dx = this.x - p.x;
+          const dy = this.y - p.y;
+          const distSq = dx * dx + dy * dy;
+          if (distSq < this.range * this.range) {
+              totalStrength += p.concentration || 1; // Assume 1 if no value
+          }
+      }
+  
+      return totalStrength;
+  }
     
 
     draw(ctx){

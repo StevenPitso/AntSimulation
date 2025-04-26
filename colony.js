@@ -15,14 +15,16 @@ class Colony{
             this.Ants[i].nestNode = {x: this.x, y: this.y}
         }
 
-
+        this.foodCollected = 0;
 
         this.listPheromones = [];
         this.listFood = [];
         this.MAP = [];
         
     }
-    update(){
+    update(debugMod){
+        this._DEBUG_ = debugMod
+        
         for(let ant of this.Ants){
             ant.debugMod = this._DEBUG_
         }
@@ -30,7 +32,7 @@ class Colony{
         for(let ant of this.Ants){
             let pheroType = (ant.hasFood == true) ? 'Food' : 'Home';
             
-            let pheroRadius = (pheroType == 'Food') ? 1 : 1;
+            let pheroRadius = (pheroType == 'Food') ? 0.7 : 0.7;
             this.listPheromones.push(new Pheromounes(ant.x ,ant.y , pheroType,pheroRadius));
             ant.update(this.listPheromones, this.MAP);
             ant.foodMap = this.listFood
@@ -38,7 +40,8 @@ class Colony{
             const distance = Math.sqrt((ant.x - this.x )**2 + (ant.y - this.y) ** 2)
             if( distance < 20  && ant.hasFood){
                 ant.direction -= Math.PI 
-                console.log('hit')
+               // console.log('hit')
+                this.foodCollected ++;
             }
 
         }
@@ -49,12 +52,21 @@ class Colony{
         for(const ant of this.Ants){
             ant.draw(ctx)
         }
-
+        
         ctx.beginPath();
         ctx.fillStyle = '#181100'   // border color :  #181100;
         ctx.arc(this.x, this.y , 20, 0, Math.PI * 2)
         ctx.fill();
 
 
+        ctx.beginPath();
+        ctx.strokeStyle = "#fff";
+        ctx.font = "normal 16px Arial"
+
+        ctx.strokeText(this.foodCollected, this.x -12, this.y+5);
+       
+
+        
+        ctx.stroke()
     }
 }

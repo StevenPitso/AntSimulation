@@ -2,76 +2,82 @@
     padding: 0; 
     margin:0;
     font-size: 10px;
-    background-color:#4f3a05;
+  
 
 }
 
 #canvas{
     background-color: #c3ae7a;  /*  #c1a868 */
-    border: 3px solid #473302
-    
+    border: 3px solid #473302;
+    left:0%;
+    top: 0%;
+    position: absolute;
 }
 
-/*
-    Styling for !Hiding state
-*/
-#Btn-Reset{
-    padding: 20px;
-    margin: 10px;
-    width: 80%;
-    height:20px;
-    border-radius: 30px 30px 30px 30px;  
-    color: #fff;
-    font-size: 1rem;  
-}
-
-#ControlsTab{
-    width: 20%;
-    height:50%;
-    background-color: #5c4500;
-    border:4px solid #fff;
-    border-radius: 10px 10px 10px 10px;
-    color: #000;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items:normal;
-
-}
-
-#NumAnts{
-    margin: 10px;
+#ControlTab{
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-family:monospace;
+    justify-content: space-around;
+    align-items: center;
+    color: white;
+    width: auto;
+    height: auto;
+    border:  2px solid #fff;
+    border-radius:10px;
+    background-color: rgba(0, 0, 0, 0.594);
     padding: 10px;
-    width: 80%;
-    height: 20px;
-    border: 2px solid #fff;
-    border-radius: 30px 30px 30px 30px;
-    text-align: center;
+
 }
 
-.Btn-Radio{
-
-    width: 20px;
-    height:20px;
-}
-.class-Label{
-    margin: 10px;
-    padding: 10px;
+#labelContainer label {
     font-size: 20px;
-    color: #fff;
-    display: flex;
-    justify-content: space-between;
-    flex-direction:row-reverse;
+    display: block;
+    justify-content: space-around;
+    align-items: center;
     
-}
+  }
+  .tooltip-text {
+    visibility: hidden;
+    width: 200px;
+    background-color: #9a7403;
+    color: #1f1f7d;
+    text-align: center;
+    border-radius: 50%;
+    padding: 5px 8px;
+    position: absolute;
+    z-index: 20;
+    bottom: 125%; /* position above the (i) */
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  
+  #Info {
+    padding: 8px;
+    display: flex;
+    
+    justify-content: flex-end;
+    text-align: center;
+    
+  }
+  
+  #info-link {
+    right: 0;
+    width: 10px;
+    height: 10px;
+    bottom:100%;
+    margin-bottom: 0;
+    color: #fff;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: bold;
+  }
 
-
-/* 
-Styling for Hide state
-
-
-this- might be hard I will leave it for the touch ups ;
-*/
-
-
-082 400 7572
+  #info-link:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+  }
+/*082 400 7572*/

@@ -8,21 +8,27 @@
     <title>Ant Simualtion</title>
 </head>
 <body>
-     <div id="ControlsTab">
-        <button class='btn' id="Btn-Reset">Reset</button>
-        <input type="text" id="NumAnts" placeholder="Number of Ants "/>
-        <label class="class-Label"> Add obstacles :
-            <input type="radio" id="AddObstacles" class="Btn-Radio"/>
-        </label>
-        <label class="class-Label"> Add Food : 
-            <input type="radio" id="AddFood" class="Btn-Radio"/>
-        </label>
-        <label class="class-Label"> Debug Mode :
-            <input type="radio" id="DebugMode" class="Btn-Radio"/>
-        </label>
+   
+        <canvas id="canvas"></canvas>
+        <div id="ControlTab">
+        
+            <div id="labelContainer">
+                <label id="labelDebugMode">Debug Mode : OFF</label>
+                <label id="labelWallMode"> Tools : No Tool Selected</label>
+                <label id="labelEditMap">EDIT Mode  : OFF</label>
+            </div>
+    
+            <div id="Info" title="How to use :)">
+                <a id="info-link" href="./about.html">
+                   <p id="info" style="font-size: 15px;">
+                    &#9432;
+                   </p>
+                </a>
+            </div>
+        </div>
+  
 
-     </div>
-     <canvas id="canvas"></canvas>
+    
 </body>
 
     <script src="controls.js"></script>
@@ -32,5 +38,6 @@
     <script src="ant.js"></script>
     <script src ='colony.js'></script>
     <script src ='obstacles.js'></script>
+    <script src ='Map Generation/cave.js'></script>
     <script src ='main.js'></script>
 </html>
