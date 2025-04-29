@@ -61,7 +61,7 @@ class Cave{
             if (!currentTool) return;
     
             const rect = this.canvas.getBoundingClientRect();
-            const mouseX = e.clientX - rect.left;
+            const mouseX = e.clientX - rect.left;  // Make the mouse acurate :)
             const mouseY = e.clientY - rect.top;
     
             const tileX = Math.floor(mouseX / this.MapConfig.unitSize);
@@ -146,7 +146,7 @@ class Cave{
                 }
             }
     
-            noFood = false; // exit outer loop once we've placed the food
+            noFood = false; // exit outer loop once we've placed the food   :) we need this 
         }
     }
 
@@ -205,7 +205,7 @@ class Cave{
 
     }
     getEdgeWalls(layers = 2) {
-        const edges = new Set();
+        const edges = new Set(); /// So Js is cool because we can pass an array to the constructor like this (set())
         const width = this.MapConfig.width;
         const height = this.MapConfig.height;
         const unit = this.MapConfig.unitSize + 10;

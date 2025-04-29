@@ -8,7 +8,8 @@
   - maybe apply a pathfinding algorithm e.g A*
   - make a better collision detections system;2
   - fix bugs ( hasFood no food Bug , leaving bounds)
-  - Apply design patterns
+  - Apply design patterns (Object Pool )
+  - 
 */
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
@@ -143,5 +144,5 @@ function InputsAndOutputs() {
      console.log("Updated state:", state);
   });
 
-  return state; // the object reference stays the same, so you can track updates
+  return state; // the object reference stays the same, so you can track updates (YEAH THIS SICK i KNOW :)
 }
